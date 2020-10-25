@@ -1,0 +1,19 @@
+{
+  "name": "webosc-server",
+  "version": "1.0.0",
+  "description": "Receive OSC commands over Websocket and tranform them to local UDP packets.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dgram": "^1.0.1",
+    "g": "^2.0.1",
+    "nodemon": "^2.0.4",
+    "osc": "^2.4.1",
+    "osc-js": "^2.1.0",
+    "ws": "^7.3.1"
+  }
+}

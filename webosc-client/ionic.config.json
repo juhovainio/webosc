@@ -1,0 +1,7 @@
+{
+  "name": "webosc",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

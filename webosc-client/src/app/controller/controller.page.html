@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>controller</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <div class="surface" (touchstart)="handleTouch($event)" (touchmove)="handleTouch($event)" [style.background]="color">Touch me</div>
+
+    <div>
+      <label>Clip</label>
+      <ion-button (click)="clipSelection = 1" [class.active]="clipSelection == 1">1</ion-button>
+      <ion-button (click)="clipSelection = 2" [class.active]="clipSelection == 2">2</ion-button>
+      <ion-button (click)="clipSelection = 3" [class.active]="clipSelection == 3">3</ion-button>
+      <ion-button (click)="clipSelection = 4" [class.active]="clipSelection == 4">4</ion-button>
+    </div>
+    
+    <div>
+      <label>Color picker</label><input [(colorPicker)]="color" [style.background]="color"/><br>
+    </div>
+
+    <ion-button (click)="send()">Send OSC command</ion-button><br>
+
+    {{ touchCoords | json }}
+
+</ion-content>
