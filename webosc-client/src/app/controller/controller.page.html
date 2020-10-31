@@ -22,6 +22,13 @@
 
     <ion-button (click)="send()">Send OSC command</ion-button><br>
 
+    <h3> Throw speed: {{ sensorData.acceleration.max.x }} / {{ sensorData.acceleration.max.y }} / {{ sensorData.acceleration.max.z }} </h3>
+    <ion-button (click)="sensorData.acceleration.max = {x: 0, y: 0, z:0}">clear</ion-button>
+
     {{ touchCoords | json }}
+
+    {{ message | json }}
+
+    {{ sensorData | json }}
 
 </ion-content>

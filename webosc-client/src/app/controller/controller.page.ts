@@ -2,12 +2,55 @@ import { Component, HostListener, OnInit } from '@angular/core';
 
 import * as convert from 'color-convert';
 
+import { DeviceMotion, DeviceMotionAccelerationData } from '@ionic-native/device-motion';
+import { Platform } from '@ionic/angular';
+
 @Component({
   selector: 'app-controller',
   templateUrl: './controller.page.html',
   styleUrls: ['./controller.page.scss'],
 })
 export class ControllerPage implements OnInit {
+
+  @HostListener('window:compassneedscalibration', ['$event'])
+  onCalibrationMessage(event) {
+    this.message = event;
+  }
+
+  @HostListener('window:devicemotion', ['$event'])
+  onMotionMessage(e:DeviceMotionEvent) {
+    this.sensorData.acceleration.x = Math.round(e.acceleration.x);
+    this.sensorData.acceleration.y = Math.round(e.acceleration.y);
+    this.sensorData.acceleration.z = Math.round(e.acceleration.z);
+    if(this.sensorData.acceleration.x > this.sensorData.acceleration.max.x){
+      this.sensorData.acceleration.max.x = this.sensorData.acceleration.x;
+    }
+    if(this.sensorData.acceleration.y > this.sensorData.acceleration.max.y){
+      this.sensorData.acceleration.max.y = this.sensorData.acceleration.y;
+    }
+    if(this.sensorData.acceleration.z > this.sensorData.acceleration.max.z){
+      this.sensorData.acceleration.max.z = this.sensorData.acceleration.z;
+    }
+    if(
+      this.sensorData.acceleration.max.x > this.threshold.x &&
+      this.sensorData.acceleration.max.z > this.threshold.z
+    ){
+      window.navigator.vibrate(200);
+      this.sensorData.acceleration.max = {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+      this.send();
+    }
+  }
+
+  @HostListener('window:deviceorientation', ['$event'])
+  onOrientationMessage(e:DeviceOrientationEvent) {
+    this.sensorData.orientation.alpha = Math.round(e.alpha);
+    this.sensorData.orientation.beta = Math.round(e.alpha);
+    this.sensorData.orientation.gamma = Math.round(e.alpha);
+  }
 
   color: string = '#fff';
   osc = (<any>window).osc;
@@ -20,13 +63,39 @@ export class ControllerPage implements OnInit {
     y: null
   }
 
-  constructor() {
+  threshold = {
+    x: 15,
+    y: 0,
+    z: 15
+  }
+
+  message;
+  sensorData = {
+    orientation: {
+      alpha: 0,
+      beta: 0,
+      gamma: 0
+    },
+    acceleration: {
+      x: 0,
+      y: 0,
+      z: 0,
+      max: {
+        x: 0,
+        y: 0,
+        z: 0
+      }
+    }
+  };
+
+  constructor(
+  ) {
   }
 
   ngOnInit() {
 
     this.oscPort = new this.osc.WebSocketPort({
-      url: 'ws://192.168.8.102:8080',
+      url: 'wss://192.168.1.102:8080',
       metadata: true
     });
 
@@ -38,7 +107,6 @@ export class ControllerPage implements OnInit {
       });
     });
 
-    
   }
 
   send(){
@@ -57,7 +125,7 @@ export class ControllerPage implements OnInit {
         ]
       })
       this.oscPort.send({
-        address: '/composition/layers/1/clips/'+ this.clipSelection + '/video/effects/solidcoloreffect/effect/color',
+        address: '/composition/layers/1/clips/'+ this.clipSelection + '/video/source/solidcolor/color',
         args: [
           {
             type: "r",
